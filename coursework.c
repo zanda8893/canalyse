@@ -131,7 +131,8 @@ int help () {
   printf("\n         [--removecomments] remove all comments and out a .o file with the same name");
   printf("\n         [--balancebrackets] check that all brackets are balanced");
   printf("\n         [--functioncount] count the number of functions");
-  printf("\n         [--help] display this message");
+  printf("\n         [--all] run all checks");
+  printf("\n         [--help] display this message\n");
 
 }
 int main(int argc, char *argv[]) {
@@ -157,6 +158,14 @@ int main(int argc, char *argv[]) {
     printf("Brackets are %s\n", balancebrackets(argv[2]));
   } else if (strcmp(argv[1], "--functioncount") == 0) {
     printf("Counting functions in file %s\n", argv[2]);
+    printf("There are %d functions\n", functioncount(argv[2]));
+  } else if (strcmp(argv[1], "--all") == 0) {
+    printf("Running all checks on file %s\n", argv[2]);
+    printf("Lines: %d\n", countlines(argv[2]));
+    printf("Characters: %d\n", countcharacters(argv[2]));
+    printf("Code lines: %d\n", countcodelines(argv[2]));
+    printf("No comment file saved as: %s\n",removecomments(argv[2]));
+    printf("Brackets are %s\n", balancebrackets(argv[2]));
     printf("There are %d functions\n", functioncount(argv[2]));
   } else {
     printf("Error %s is not a valid argument\n", argv[1]);
