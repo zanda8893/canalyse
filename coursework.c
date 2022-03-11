@@ -1,24 +1,33 @@
+// Author Alexander Hallard
+// Purpose analysis of c source files
+
+// Import required libaries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// Function to countlines
 int countlines(char *filename) {
   FILE *file = fopen(filename,"r");
   int lines = 0;
   char character;
-  while ((character = fgetc(file)) != EOF) {
+
+  while ((character = fgetc(file)) != EOF) { // get characters from file while not end of file character
     if (character == '\n') {
       lines++;
     }
   }
+
   fclose(file);
+  lines++; // Add one more line as the last line does not contain a \n character
+
   return lines;
 }
 
 int countcharacters(char *filename) {
   FILE *file = fopen(filename,"r");
   int characters = 0;
-  while ((fgetc(file)) != EOF) {
+  while ((fgetc(file)) != EOF) { // get characters from file while not end of file character
     characters++;
   }
   fclose(file);
@@ -29,7 +38,7 @@ int countcodelines(char *filename) {
   FILE *file = fopen(filename,"r");
   int codelines = 0;
   char line[1024];
-  while (fgets(line,1024, file)) {
+  while (fgets(line,1024, file)) { // get characters from file while not end of file
     if (line[0] == '/' && line[1] == '/' && line[2] == ' ') {
       continue;
     } else if (line[0] == '\n') {
@@ -91,6 +100,52 @@ const char * balancebrackets(char *filename) {
     return "unbalanced";
   }
 }
+
+const char * balancebrackets2(char *filename) {
+  FILE *file = fopen(filename,"r");
+  char character;
+  int i = 0;
+  int bracketsnormal = 0;
+  int bracketscurl = 0;
+  int bracketssquare = 0;
+  char *brackets;
+  char bracket;
+  while ((character = fgetc(file)) != EOF) {
+    if (character == '(' && character == ')' && character == '[' && character == ']' && character == '{' && character == '}') {
+      i++;
+      brackets[i] = character;
+    }
+  }
+  while (i != 0) {
+    bracket = brackets[i];
+    i--;
+    if (character == '{') {
+      if (bracketscurl == 0) {
+        return "unbalanced";
+      }
+      bracketscurl--;
+    } else if (character == '[') {
+      if (bracketssquare == 0) {
+        return "unbalanced";
+      }
+      bracketssquare--;
+    } else if (character == '(') {
+      if (bracketsnormal == 0) {
+        return "unbalanced";
+      }
+      bracketsnormal--;
+    } else if (character == ')') {
+      bracketsnormal++;
+    } else if (character == ']') {
+      bracketssquare++;
+    } else if (character == '}') {
+      bracketscurl++;
+    }
+  }
+  fclose(file);
+  return "balanced";
+}
+
 int functioncount (char *filename) {
   FILE *file = fopen(filename,"r");
   int functions = 0;
@@ -155,7 +210,7 @@ int main(int argc, char *argv[]) {
     printf("No comment file saved as: %s\n",removecomments(argv[2]));
   } else if (strcmp(argv[1], "--balancebrackets") == 0) {
     printf("Checking if brackets are balanced of file %s\n", argv[2]);
-    printf("Brackets are %s\n", balancebrackets(argv[2]));
+    printf("Brackets are %s\n", balancebrackets2(argv[2]));
   } else if (strcmp(argv[1], "--functioncount") == 0) {
     printf("Counting functions in file %s\n", argv[2]);
     printf("There are %d functions\n", functioncount(argv[2]));
