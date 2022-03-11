@@ -8,7 +8,8 @@
 #                 
 <h2>Canalyse is a commandline c source files analysis tool</h2>
 
-
+  
+```
 Options: [--countlines] count all lines including comments and whitespace
          [--countcharacters] count all characters
          [--countcodelines] count all lines of code
@@ -17,7 +18,7 @@ Options: [--countlines] count all lines including comments and whitespace
          [--functioncount] count the number of functions
          [--all] run all checks
          [--help] display help message
-
+```
 #
 <h3>Compiling the program</h3>
 
