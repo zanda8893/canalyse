@@ -81,15 +81,15 @@ const char * removecomments(char *filename) {
 }
 
 const char * balancebrackets(char *filename) {
-  u_int_t bracketStack[1024];
+  u_int8_t bracketStack[1024];
   int p = 0;
   
-  u_int_t brackets = 1;
-  u_int_t bracketscurl = 2;
-  u_int_t bracketssquare = 3;
+  u_int8_t brackets = 1;
+  u_int8_t bracketscurl = 2;
+  u_int8_t bracketssquare = 3;
   
-  boolean singleQuote = false;
-  boolean doubleQuote = false;
+  bool singleQuote = false;
+  bool doubleQuote = false;
 
   char character;
   FILE *file = fopen(filename,"r");
@@ -125,10 +125,10 @@ const char * balancebrackets(char *filename) {
         }
       }
     } else {
-      if (singleQuote == True && character == '\'') {
-        singleQuote = False;
-      } else if (doubleQuote == True && character == '"'){
-        doubleQuote = False;
+      if (singleQuote == true && character == '\'') {
+        singleQuote = false;
+      } else if (doubleQuote == true && character == '"'){
+        doubleQuote = false;
       }
     }
     
