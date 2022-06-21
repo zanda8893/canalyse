@@ -4,6 +4,7 @@
 // Import required libaries
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Function to countlines
@@ -86,34 +87,51 @@ const char * balancebrackets(char *filename) {
   u_int_t brackets = 1;
   u_int_t bracketscurl = 2;
   u_int_t bracketssquare = 3;
+  
+  boolean singleQuote = false;
+  boolean doubleQuote = false;
 
   char character;
   FILE *file = fopen(filename,"r");
 
   while ((character = fgetc(file)) != EOF) {
-    if (character == '{') {
-      bracketStack[p++] = bracketscurl;
-    } else if (character == '[') {
-      bracketStack[p++] = bracketssquare;
-    } else if (character == '(') {
-      bracketStack[p++] = brackets;
-      
-    } else if (character == ')') {
-      p--;
-      if (p == -1 || bracketStack[p] != brackets) {
-        return "unbalenced";
+
+    if (!(doubleQuote||singleQuote)){
+      if (character == '\'') {
+         singleQuote = true;
+      } else if (character == '"') {
+        doubleQuote = true;
+      } else if (character == '{') {
+        bracketStack[p++] = bracketscurl;
+      } else if (character == '[') {
+        bracketStack[p++] = bracketssquare;
+      } else if (character == '(') {
+        bracketStack[p++] = brackets;
+
+      } else if (character == ')') {
+        p--;
+        if (p == -1 || bracketStack[p] != brackets) {
+          return "unbalenced";
+        }
+      } else if (character == ']') {
+        p--;
+        if (p == -1 || bracketStack[p] != bracketssquare) {
+          return "unbalenced";
+        }
+      } else if (character == '}') {
+        p--;
+        if (p == -1 || bracketStack[p] != bracketscurl) {
+          return "unbalenced";
+        }
       }
-    } else if (character == ']') {
-      p--;
-      if (p == -1 || bracketStack[p] != bracketssquare) {
-        return "unbalenced";
-      }
-    } else if (character == '}') {
-      p--;
-      if (p == -1 || bracketStack[p] != bracketscurl) {
-        return "unbalenced";
+    } else {
+      if (singleQuote == True && character == '\'') {
+        singleQuote = False;
+      } else if (doubleQuote == True && character == '"'){
+        doubleQuote = False;
       }
     }
+    
   }
   fclose(file);
 
