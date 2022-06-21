@@ -80,12 +80,12 @@ const char * removecomments(char *filename) {
 }
 
 const char * balancebrackets(char *filename) {
-  byte bracketStack[1024];
+  u_int_t bracketStack[1024];
   int p = 0;
   
-  byte brackets = 1;
-  byte bracketscurl = 2;
-  byte bracketssquare = 3;
+  u_int_t brackets = 1;
+  u_int_t bracketscurl = 2;
+  u_int_t bracketssquare = 3;
 
   char character;
   FILE *file = fopen(filename,"r");
@@ -105,12 +105,12 @@ const char * balancebrackets(char *filename) {
       }
     } else if (character == ']') {
       p--;
-      if (p == -1 || bracketStack[p] != brackets) {
+      if (p == -1 || bracketStack[p] != bracketssquare) {
         return "unbalenced";
       }
     } else if (character == '}') {
       p--;
-      if (p == -1 || bracketStack[p] != brackets) {
+      if (p == -1 || bracketStack[p] != bracketscurl) {
         return "unbalenced";
       }
     }
