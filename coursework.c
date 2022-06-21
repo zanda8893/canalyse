@@ -4,6 +4,7 @@
 // Import required libaries
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Function to countlines
@@ -80,31 +81,61 @@ const char * removecomments(char *filename) {
 }
 
 const char * balancebrackets(char *filename) {
-  int brackets = 0;
-  int bracketscurl = 0;
-  int bracketssquare = 0;
-  char character;
+  u_int8_t bracketStack[1024];
+  int p = 0;
+  
+  u_int8_t brackets = 1;
+  u_int8_t bracketscurl = 2;
+  u_int8_t bracketssquare = 3;
+  
+  bool singleQuote = false;
+  bool doubleQuote = false;
 
+  char character;
   FILE *file = fopen(filename,"r");
 
   while ((character = fgetc(file)) != EOF) {
-    if (character == '{') {
-      bracketscurl++;
-    } else if (character == '[') {
-      bracketssquare++;
-    } else if (character == '(') {
-      brackets++;
-    } else if (character == ')') {
-      brackets--;
-    } else if (character == ']') {
-      bracketssquare--;
-    } else if (character == '}') {
-      bracketscurl--;
+
+    if (!(doubleQuote||singleQuote)){
+      if (character == '\'') {
+         singleQuote = true;
+      } else if (character == '"') {
+        doubleQuote = true;
+      } else if (character == '{') {
+        bracketStack[p++] = bracketscurl;
+      } else if (character == '[') {
+        bracketStack[p++] = bracketssquare;
+      } else if (character == '(') {
+        bracketStack[p++] = brackets;
+
+      } else if (character == ')') {
+        p--;
+        if (p == -1 || bracketStack[p] != brackets) {
+          return "unbalenced";
+        }
+      } else if (character == ']') {
+        p--;
+        if (p == -1 || bracketStack[p] != bracketssquare) {
+          return "unbalenced";
+        }
+      } else if (character == '}') {
+        p--;
+        if (p == -1 || bracketStack[p] != bracketscurl) {
+          return "unbalenced";
+        }
+      }
+    } else {
+      if (singleQuote == true && character == '\'') {
+        singleQuote = false;
+      } else if (doubleQuote == true && character == '"'){
+        doubleQuote = false;
+      }
     }
+    
   }
   fclose(file);
 
-  if (brackets == 0 && bracketscurl == 0 && bracketssquare == 0) {
+  if (p == 0) {
     return "balanced";
   } else {
     return "unbalanced";
