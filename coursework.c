@@ -80,31 +80,44 @@ const char * removecomments(char *filename) {
 }
 
 const char * balancebrackets(char *filename) {
-  int brackets = 0;
-  int bracketscurl = 0;
-  int bracketssquare = 0;
-  char character;
+  byte bracketStack[1024];
+  int p = 0;
+  
+  byte brackets = 1;
+  byte bracketscurl = 2;
+  byte bracketssquare = 3;
 
+  char character;
   FILE *file = fopen(filename,"r");
 
   while ((character = fgetc(file)) != EOF) {
     if (character == '{') {
-      bracketscurl++;
+      bracketStack[p++] = bracketscurl;
     } else if (character == '[') {
-      bracketssquare++;
+      bracketStack[p++] = bracketssquare;
     } else if (character == '(') {
-      brackets++;
+      bracketStack[p++] = brackets;
+      
     } else if (character == ')') {
-      brackets--;
+      p--;
+      if (p == -1 || bracketStack[p] != brackets) {
+        return "unbalenced";
+      }
     } else if (character == ']') {
-      bracketssquare--;
+      p--;
+      if (p == -1 || bracketStack[p] != brackets) {
+        return "unbalenced";
+      }
     } else if (character == '}') {
-      bracketscurl--;
+      p--;
+      if (p == -1 || bracketStack[p] != brackets) {
+        return "unbalenced";
+      }
     }
   }
   fclose(file);
 
-  if (brackets == 0 && bracketscurl == 0 && bracketssquare == 0) {
+  if (p == 0) {
     return "balanced";
   } else {
     return "unbalanced";
