@@ -83,11 +83,11 @@ const char * removecomments(char *filename) {
 const char * balancebrackets(char *filename) {
   u_int8_t bracketStack[1024];
   int p = 0;
-  
+
   u_int8_t brackets = 1;
   u_int8_t bracketscurl = 2;
   u_int8_t bracketssquare = 3;
-  
+
   bool singleQuote = false;
   bool doubleQuote = false;
 
@@ -131,15 +131,11 @@ const char * balancebrackets(char *filename) {
         doubleQuote = false;
       }
     }
-    
+
   }
   fclose(file);
 
-  if (p == 0) {
-    return "balanced";
-  } else {
-    return "unbalanced";
-  }
+  return "balanced";
 }
 
 int functioncount (char *filename) {
@@ -159,7 +155,7 @@ int functioncount (char *filename) {
       word = strtok(NULL, " ");
 
     }
-    
+
     if (strcmp(words[0], "int") == 0 || strcmp(words[0],"double") == 0 || strcmp(words[0],"void") == 0 && strcmp(words[2],"(") == 0) {
       functions++;
     }
