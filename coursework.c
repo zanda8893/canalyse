@@ -135,7 +135,11 @@ const char * balancebrackets(char *filename) {
   }
   fclose(file);
 
-  return "balanced";
+
+  if (p == 0) {
+    return "balanced";
+  }
+  return "unbalanced";
 }
 
 int functioncount (char *filename) {
