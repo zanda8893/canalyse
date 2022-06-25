@@ -95,6 +95,9 @@ const char * balancebrackets(char *filename) {
       /* iterate till next " */
       character = fgetc(file); 
       while (character != EOF && character != '"') { 
+        if (character == '\\') {
+          fgetc(file);
+        }
         character = fgetc(file); 
       }
       break;
@@ -103,6 +106,9 @@ const char * balancebrackets(char *filename) {
       /* iterate till next ' */
       character = fgetc(file); 
       while (character != EOF && character != '\'') { 
+        if (character == '\\') {
+          fgetc(file);
+        }
         character = fgetc(file); 
       }
       break;
