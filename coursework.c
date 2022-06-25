@@ -81,65 +81,100 @@ const char * removecomments(char *filename) {
 }
 
 const char * balancebrackets(char *filename) {
-  u_int8_t bracketStack[1024];
+  char bracketStack[1024];
   int p = 0;
-
-  u_int8_t brackets = 1;
-  u_int8_t bracketscurl = 2;
-  u_int8_t bracketssquare = 3;
-
-  bool singleQuote = false;
-  bool doubleQuote = false;
 
   char character;
   FILE *file = fopen(filename,"r");
 
   while ((character = fgetc(file)) != EOF) {
 
-    if (!(doubleQuote||singleQuote)){
-      if (character == '\'') {
-         singleQuote = true;
-      } else if (character == '"') {
-        doubleQuote = true;
-      } else if (character == '{') {
-        bracketStack[p++] = bracketscurl;
-      } else if (character == '[') {
-        bracketStack[p++] = bracketssquare;
-      } else if (character == '(') {
-        bracketStack[p++] = brackets;
-
-      } else if (character == ')') {
-        p--;
-        if (p == -1 || bracketStack[p] != brackets) {
-          return "unbalenced";
+    switch (character) {
+    case '"':
+      /* iterate till next " */
+      character = fgetc(file); 
+      while (character != EOF && character != '"') { 
+        if (character == '\\') {
+          fgetc(file);
         }
-      } else if (character == ']') {
-        p--;
-        if (p == -1 || bracketStack[p] != bracketssquare) {
-          return "unbalenced";
-        }
-      } else if (character == '}') {
-        p--;
-        if (p == -1 || bracketStack[p] != bracketscurl) {
-          return "unbalenced";
-        }
+        character = fgetc(file); 
       }
-    } else {
-      if (singleQuote == true && character == '\'') {
-        singleQuote = false;
-      } else if (doubleQuote == true && character == '"'){
-        doubleQuote = false;
+      break;
+    
+    case '\'':
+      /* iterate till next ' */
+      character = fgetc(file); 
+      while (character != EOF && character != '\'') { 
+        if (character == '\\') {
+          fgetc(file);
+        }
+        character = fgetc(file); 
+      }
+      break;
+
+    case '\\':
+      /* skip next character */
+      character = fgetc(file);
+      break;
+    
+    case '/':
+      /* checks if the next character is the same, otherwise runs defaults */
+      character = fgetc(file);
+      if (character == '/') { // Single line comment
+        while (character != EOF && character != '\n') { 
+          character = fgetc(file); 
+        }
+        break;
+
+      } else if (character == '*') { // Multi line commment
+        while (character != EOF && (character != '*' || (character = fgetc(file)) != '/') ) {
+          if (character != EOF) {
+            character = fgetc(file);
+          }
+        }
+        break;
+      
+      }else if (character == EOF) { // End of document
+        break;
+      }
+
+    default:
+      /* Bracket balencing */
+      // Check for brackets
+      switch (character) {
+        case '(':
+          bracketStack[p++] = '(';
+          break;
+        case '{':
+          bracketStack[p++] = '{';
+          break;
+        case '[':
+          bracketStack[p++] = '[';
+          break;
+        case ')':
+          p--;
+          if (p == -1 || bracketStack[p] != '(') { return "unbalenced"; }
+          break;
+        case '}':
+          p--;
+          if (p == -1 || bracketStack[p] != '{') { return "unbalenced"; }
+          break;
+        case ']':
+          p--;
+          if (p == -1 || bracketStack[p] != '[') { return "unbalenced"; }
+          break;
+        
+        default:
+          break;
       }
     }
-
   }
   fclose(file);
-
 
   if (p == 0) {
     return "balanced";
   }
-  return "unbalanced";
+  return "unbalenced";
 }
 
 int functioncount (char *filename) {
