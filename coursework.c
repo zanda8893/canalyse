@@ -84,7 +84,6 @@ const char * balancebrackets(char *filename) {
   char bracketStack[1024];
   int p = 0;
 
-  bool unbalenced = false;
   char character;
   FILE *file = fopen(filename,"r");
 
